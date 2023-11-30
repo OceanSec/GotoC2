@@ -1,0 +1,32 @@
+syntax = "proto3";
+package grpcapi;
+option go_package = "./grpcapi";
+service Implant {
+  // 将从服务器检索所有为执行的命令
+  rpc FetchCommand(Empty) returns (Command);
+  // 会将一个Command消息发送服务器
+  rpc SendOutput(Command) returns (Empty);
+  // 从服务端检索sleep时间间隔
+  rpc GetSleepTime(Empty) returns (SleepTime);
+}
+
+service Admin{
+  // 接收一个Command消息作为参数，并期望获读回一个Command消息
+  rpc RunCommand(Command) returns (Command);
+  // 时间间隔
+  rpc SetSleepTime(SleepTime) returns (Empty);
+}
+
+// 执行命令的消息，一个用于维护操作系统的命令；一个用于维护命令执行的输出
+message Command {
+  string In = 1;
+  string Out = 2;
+}
+
+//Empty 用来代替null的空消息 定义这个Empty类型是由于gRPC不显式地允许空值
+message Empty {
+}
+
+message SleepTime{
+  int32 time = 1;
+}
